@@ -22,13 +22,7 @@ A web application for exploring CSV datasets: upload a file, browse it in a pagi
 
 ## Architecture
 
-```
-┌──────────────────┐         ┌───────────────────────────┐         ┌────────────┐
-│  React frontend  │  HTTP   │      FastAPI backend      │  HTTPS  │   Google   │
-│  (Vite)          ├────────▶│  upload / rows / ask      ├────────▶│   Gemini   │
-│  src/api.js      │         │  pandas in-memory store   │         │            │
-└──────────────────┘         └───────────────────────────┘         └────────────┘
-```
+![Software Component Diagram](./docs/scd.png)
 
 - **Frontend** (`frontend/`) — React + Vite. All backend calls are centralized in `src/api.js`; `App.jsx` owns the dataset state and conditionally renders the table and chat panels.
 - **Backend** (`backend/`) — FastAPI. Parses uploaded CSVs with pandas into an in-memory store, serves paginated rows, and orchestrates the LLM: it builds the prompt context (schema, dtypes, summary statistics, up to 100 sample rows) and keeps the API key server-side. The frontend never talks to Gemini directly.
