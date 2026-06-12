@@ -1,0 +1,203 @@
+/* ===================================================
+   DATA TABLE
+   =================================================== */
+
+/* ── 1. Panel ───────────────────────────────────── */
+
+.datatable-section {
+  width: var(--table-w);
+  height: var(--table-h);
+  max-height: var(--table-h);
+  background: var(--warm-purple-fill);
+  border: var(--border-width) solid var(--warm-purple-solid);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── 2. Scroll area & scrollbars ────────────────── */
+
+.datatable-scroll {
+  /* sticky header height, derived from the th tokens so the
+     scrollbar inset and gap filler below stay in sync with it */
+  --table-header-h: calc(
+    2 * var(--space-sm) +
+    var(--font-size-sm) * var(--line-height-base) +
+    var(--border-width)
+  );
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  /* paint the scrollbar strip beside the sticky header solid,
+     so the header runs edge-to-edge to the panel border */
+  background: linear-gradient(
+    to bottom,
+    var(--warm-purple-solid) var(--table-header-h),
+    transparent var(--table-header-h)
+  );
+}
+
+/* Firefox fallback only — see note in ChatInterface.css */
+@supports not selector(::-webkit-scrollbar) {
+  .datatable-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bubble-assistant-bg) transparent;
+  }
+}
+
+.datatable-scroll::-webkit-scrollbar {
+  width: var(--scrollbar-w);
+  height: var(--scrollbar-w);   /* horizontal bar same width */
+}
+
+.datatable-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* start the vertical thumb's travel below the sticky header */
+.datatable-scroll::-webkit-scrollbar-track:vertical {
+  margin-top: var(--table-header-h);
+}
+
+.datatable-scroll::-webkit-scrollbar-thumb {
+  background: var(--bubble-assistant-bg);
+  border-radius: var(--scrollbar-radius);
+}
+
+/* meeting point of the two scrollbars — defaults to a white square */
+.datatable-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── 3. Pagination slide (container remounts per page) ── */
+
+.datatable-scroll--next {
+  animation: table-page-next var(--transition-page) ease-out both;
+}
+
+.datatable-scroll--prev {
+  animation: table-page-prev var(--transition-page) ease-out both;
+}
+
+@keyframes table-page-next {
+  from { transform: translateX(48px); opacity: 0; }
+  to   { transform: none;             opacity: 1; }
+}
+
+@keyframes table-page-prev {
+  from { transform: translateX(-48px); opacity: 0; }
+  to   { transform: none;              opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datatable-scroll--next,
+  .datatable-scroll--prev {
+    animation: none;
+  }
+}
+
+/* ── 4. Table ───────────────────────────────────── */
+
+.datatable {
+  width: 100%;
+  min-width: max-content;   /* allows x-scroll when cols exceed container */
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+.datatable__header-row {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* opaque — translucent fills let scrolled rows show through the sticky header */
+  background: var(--warm-purple-solid);
+}
+
+.datatable__th {
+  padding: var(--space-sm) var(--space-md);
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: var(--border-width) solid var(--warm-purple-solid);
+  font-weight: 700;
+}
+
+.datatable__row {
+  transition: background var(--transition-fast);
+}
+
+.datatable__row:hover {
+  background: var(--warm-purple-fill);
+}
+
+.datatable__td {
+  padding: var(--space-xs) var(--space-md);
+  text-align: center;
+  border-bottom: 1px solid var(--warm-purple-fill-hover);
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 5. Loading / error states ──────────────────── */
+
+/* skeleton rows while a page of data is in flight */
+.datatable-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+}
+
+/* varied bar widths read more like real rows */
+.datatable-loading .skeleton-line:nth-child(3n)   { width: 85%; }
+.datatable-loading .skeleton-line:nth-child(3n+2) { width: 70%; }
+
+.datatable-error {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  opacity: var(--opacity-subdued);
+  padding: var(--space-lg);
+}
+
+/* ── 6. Pagination bar ──────────────────────────── */
+
+.datatable-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-top: var(--border-width) solid var(--warm-purple-solid);
+  flex-shrink: 0;
+}
+
+.datatable-pagination__btn {
+  background: var(--warm-purple-fill);
+  border: var(--border-width) solid var(--warm-purple-solid);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-md);
+  color: white;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.datatable-pagination__btn:hover:not(:disabled) {
+  background: var(--warm-purple-fill-hover);
+}
+
+.datatable-pagination__btn:disabled {
+  opacity: var(--opacity-muted);
+  cursor: default;
+}
+
+.datatable-pagination__info {
+  font-size: var(--font-size-sm);
+  opacity: var(--opacity-subdued);
+}

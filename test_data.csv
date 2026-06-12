@@ -1,0 +1,6 @@
+sensor_id,temperature,pressure,status,runtime_hours
+S101,72.5,1.12,OPTIMAL,342.5
+S102,88.1,1.45,WARNING,120.2
+S103,68.4,1.09,OPTIMAL,890.0
+S104,95.2,1.92,CRITICAL,12.4
+S105,71.0,1.15,OPTIMAL,56.1

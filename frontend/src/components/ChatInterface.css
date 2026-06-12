@@ -1,0 +1,282 @@
+/* ===================================================
+   CHAT INTERFACE
+   =================================================== */
+
+/* ── 1. Panel ───────────────────────────────────── */
+
+.chat-section {
+  width: var(--chat-w);
+  max-height: var(--chat-h);   /* max-height so it can shrink when zoomed in */
+  height: var(--chat-h);
+  background: var(--warm-purple-fill);
+  border: var(--border-width) solid var(--warm-purple-solid);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: var(--space-md);
+}
+
+/* ── 2. History / scrolling ─────────────────────── */
+
+.chat-history {
+  flex: 1;
+  min-height: 0;
+  align-self: stretch;   /* full panel width minus the horizontal margins */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md);
+  /* inset from the panel border so the thumb clears the rounded
+     corners and the bottom cut sits above the input bar */
+  margin: 0 var(--space-sm) var(--space-sm);
+  /* reserve equal gutters left + right so assistant/user bubbles
+     sit at mirrored distances from the panel border */
+  scrollbar-gutter: stable both-edges;
+  /* soft fade where bubbles clip at the scroll edges */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--space-lg),
+    black calc(100% - var(--space-sm)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black var(--space-lg),
+    black calc(100% - var(--space-sm)),
+    transparent 100%
+  );
+}
+
+/* Firefox fallback only — when scrollbar-width/color are set, Chrome and
+   Edge ignore all ::-webkit-scrollbar styling and show native arrows */
+@supports not selector(::-webkit-scrollbar) {
+  .chat-history {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bubble-assistant-bg) transparent;
+  }
+}
+
+.chat-history::-webkit-scrollbar {
+  width: var(--scrollbar-w);
+}
+
+.chat-history::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+}
+
+.chat-history::-webkit-scrollbar-track {
+  background: transparent;
+  /* keep the thumb's travel below the rounded top corner */
+  margin-top: var(--space-xs);
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+  background: var(--bubble-assistant-bg);
+  border-radius: var(--scrollbar-radius);
+}
+
+.chat-empty {
+  margin: auto;
+  opacity: var(--opacity-subdued);
+  font-size: var(--font-size-sm);
+}
+
+/* ── 3. Bubbles ─────────────────────────────────── */
+
+.chat-message {
+  position: relative;
+  flex-shrink: 0;   /* never let a full history squash bubbles */
+  max-width: var(--bubble-w);
+  min-height: var(--space-lg);
+  padding: var(--space-md);
+  margin-bottom: calc(var(--bubble-tail-h) + var(--space-md));
+  overflow: visible;
+}
+
+/* Assistant bubble — left, purple */
+.chat-message--assistant {
+  align-self: flex-start;
+  background: var(--bubble-assistant-bg);
+  border-radius: var(--bubble-radius) var(--bubble-radius) var(--bubble-radius) 0;
+}
+
+/* tail: hangs below the square corner, pointing down */
+.chat-message--assistant::after {
+  content: '';
+  position: absolute;
+  bottom: calc(-1 * var(--bubble-tail-h));
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: var(--bubble-tail-h) solid var(--bubble-assistant-bg);
+  border-right: var(--bubble-tail-w) solid transparent;
+}
+
+/* User bubble — right, white */
+.chat-message--user {
+  align-self: flex-end;
+  background: var(--bubble-user-bg);
+  border-radius: var(--bubble-radius) var(--bubble-radius) 0 var(--bubble-radius);
+}
+
+.chat-message--user::after {
+  content: '';
+  position: absolute;
+  bottom: calc(-1 * var(--bubble-tail-h));
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: var(--bubble-tail-h) solid var(--bubble-user-bg);
+  border-left: var(--bubble-tail-w) solid transparent;
+}
+
+.chat-message--error {
+  align-self: flex-start;
+  background: var(--color-error-bg);
+  border-radius: var(--bubble-radius);
+}
+
+/* Skeleton — assistant reply being generated; combined with
+   --assistant in the JSX so it inherits the bubble + tail */
+.chat-message--skeleton {
+  width: var(--bubble-w);
+}
+
+.chat-message--skeleton .skeleton-line {
+  margin-bottom: var(--space-sm);
+}
+
+.chat-message--skeleton .skeleton-line:last-child {
+  margin-bottom: 0;
+  width: 60%;
+}
+
+.chat-message__text {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.chat-message--user .chat-message__text {
+  color: white;
+}
+
+.chat-message__usage {
+  font-size: var(--font-size-xs);
+  opacity: var(--opacity-muted);
+  margin-top: var(--space-xs);
+}
+
+/* ── 4. Markdown (assistant replies) ────────────── */
+
+/* rendered markdown supplies its own block layout */
+.chat-message__text--md {
+  white-space: normal;
+}
+
+.chat-message__text--md p,
+.chat-message__text--md ul,
+.chat-message__text--md ol,
+.chat-message__text--md pre,
+.chat-message__text--md table {
+  margin: 0 0 var(--space-sm);
+}
+
+.chat-message__text--md > :last-child {
+  margin-bottom: 0;
+}
+
+.chat-message__text--md ul,
+.chat-message__text--md ol {
+  padding-left: var(--space-lg);
+}
+
+.chat-message__text--md code {
+  font-size: 0.85em;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 0 var(--space-xs);
+}
+
+.chat-message__text--md pre {
+  overflow-x: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.chat-message__text--md pre code {
+  background: none;
+  padding: 0;
+}
+
+.chat-message__text--md table {
+  display: block;            /* lets wide tables scroll inside the bubble */
+  overflow-x: auto;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+}
+
+.chat-message__text--md th,
+.chat-message__text--md td {
+  border: 1px solid var(--warm-purple-solid);
+  padding: var(--space-xs) var(--space-sm);
+  text-align: center;
+  white-space: nowrap;   /* keep natural column widths — bubble scrolls on x instead */
+}
+
+/* ── 5. Input bar ───────────────────────────────── */
+
+.chat-form {
+  display: flex;
+  flex-direction: row;
+  width: var(--chat-input-w);
+  height: var(--chat-input-h);
+  background-color: var(--glass-white);
+  border-radius: var(--radius-input);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-md);
+}
+
+.chat-input {
+  font-size: var(--font-size-input);
+  background: none;
+  border: none;
+  outline: none;
+  color: white;
+  flex: 1;
+  padding-left: var(--space-sm);
+  padding-right: var(--space-md);   /* keep text clear of the submit button */
+  cursor: text;   /* the global reset overrides the browser's I-beam */
+}
+
+.chat-input::placeholder {
+  color: white;
+}
+
+.chat-input:focus::placeholder {
+  opacity: var(--opacity-subdued);
+}
+
+.chat-submit {
+  width: var(--submit-btn-size);
+  height: var(--submit-btn-size);
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  background: url("../assets/icons/submit-icon.svg") center / contain no-repeat;
+  transition: scale var(--transition-fast);
+}
+
+.chat-submit:hover {
+  scale: var(--submit-hover-scale);
+}

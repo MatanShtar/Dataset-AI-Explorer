@@ -1,0 +1,108 @@
+/* ===================================================
+   UPLOAD SECTION
+   =================================================== */
+
+/* ── 1. Section layout ──────────────────────────── */
+
+/* Empty state — column so error sits below the dropzone */
+.upload-section--centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+/* Loaded state — row so error sits to the right of the button */
+.upload-section--compact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-lg);
+  /* same total width as .app-content, centered the same way (auto
+     margins stay scroll-reachable under zoom — see App.css note),
+     so the button's left edge lines up with the table's */
+  width: calc(var(--table-w) + var(--content-col-gap) + var(--chat-w) + var(--chat-panel-gap));
+  margin-left: auto;
+  margin-right: auto;
+  /* entrance: rises from where the centered hero label sat */
+  animation: upload-rise var(--transition-enter) ease-out both;
+}
+
+@keyframes upload-rise {
+  from { transform: translateY(35vh); opacity: 0; }
+  to   { transform: none;             opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upload-section--compact {
+    animation: none;
+  }
+}
+
+/* ── 2. Dropzone / replace button ───────────────── */
+
+/* non-compact dropzone has no border/background — full screen is the "zone" */
+
+/* Compact state — "Replace file" button */
+.upload-section--compact .upload-dropzone {
+  width: var(--replace-btn-w);
+  height: var(--replace-btn-h);
+  border-radius: var(--radius-pill);
+  background: var(--warm-purple-fill);
+  border: var(--border-width) solid var(--warm-purple-solid);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.upload-section--compact .upload-dropzone:hover {
+  background: var(--warm-purple-fill-hover);
+}
+
+/* ── 3. Labels ──────────────────────────────────── */
+
+.upload-dropzone__label {
+  text-align: center;
+  font-size: var(--font-size-hero);
+}
+
+/* gentle pulse while the CSV is uploading */
+.upload-dropzone__label--busy {
+  animation: busy-pulse var(--shimmer-duration) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upload-dropzone__label--busy {
+    animation: none;
+  }
+}
+
+.upload-section--compact .upload-dropzone__label {
+  font-size: var(--font-size-btn);
+}
+
+/* Stacked text inside the non-compact dropzone label */
+.upload-dropzone__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.upload-dropzone__sublabel {
+  font-size: 0.8em;   /* relative to parent label size — intentional */
+}
+
+/* ── 4. Feedback ────────────────────────────────── */
+
+.upload-feedback {
+  font-size: var(--font-size-sm);
+}
+
+.upload-feedback--error {
+  color: var(--color-error-text);
+}

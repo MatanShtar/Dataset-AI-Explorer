@@ -17,3 +17,7 @@ build/
 # OS specific files
 .DS_Store
 Thumbs.db
+
+# Local-only files
+CLAUDE.md
+amat_sensor_telemetry_25k.csv

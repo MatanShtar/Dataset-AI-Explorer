@@ -1,0 +1,94 @@
+/* ===================================================
+   DESIGN TOKENS
+   Single source of truth for all magic values.
+   =================================================== */
+
+:root {
+
+  /* ── Colors ──────────────────────────────────────────
+     Raw RGB channel values let any rule pick its own alpha:
+     rgba(var(--warm-purple-rgb), 0.5)                    */
+  --warm-purple-rgb:         120, 88, 147;
+  --warm-purple-fill:        rgba(var(--warm-purple-rgb), 0.30);
+  --warm-purple-fill-hover:  rgba(var(--warm-purple-rgb), 0.45);
+  --warm-purple-solid:       rgba(var(--warm-purple-rgb), 1);
+
+  --white-tint:              rgba(255, 255, 255, 0.08);   /* drag overlay wash   */
+  --glass-white:             rgba(255, 255, 255, 0.60);   /* frosted input bg    */
+
+  /* ── Status colors ───────────────────────────────── */
+  --color-error-bg:          rgba(200, 50,  50,  0.40);   /* error chat bubble   */
+  --color-error-text:        rgba(255, 120, 120, 1);      /* error feedback text */
+
+  /* ── Opacity ─────────────────────────────────────── */
+  --opacity-muted:           0.55;   /* usage labels        */
+  --opacity-subdued:         0.50;   /* empty-state hint    */
+
+  /* ── Skeleton / busy indicators ──────────────────── */
+  --skeleton-dim:            rgba(255, 255, 255, 0.15);
+  --skeleton-bright:         rgba(255, 255, 255, 0.40);
+  --shimmer-duration:        1.4s;
+
+  /* ── Transitions ─────────────────────────────────── */
+  --transition-fast:         0.2s;
+  --transition-enter:        0.6s;   /* post-upload entrance animations */
+  --transition-page:         0.35s;  /* table pagination slide          */
+
+  /* ── Border radius ───────────────────────────────── */
+  --radius-pill:             30px;   /* replace-file button */
+  --radius-card:             29px;   /* chat + table panels */
+  --radius-input:            27px;   /* chat input field    */
+  --radius-overlay:          12px;   /* drag-border inset   */
+
+  /* ── Component sizes (px — intentional fixed design dimensions) */
+  --replace-btn-w:           158px;
+  --replace-btn-h:           51px;
+  --chat-w:                  295px;
+  --chat-h:                  680px;
+  --chat-input-w:            274px;
+  --chat-input-h:            46px;
+  --submit-btn-size:         20px;
+  --table-w:                 900px;
+  --table-h:                 680px;   /* intentionally same height as chat */
+
+  /* ── Chat bubbles ────────────────────────────────── */
+  --bubble-assistant-bg:     rgba(var(--warm-purple-rgb), 0.60);
+  --bubble-user-bg:          rgba(255, 255, 255, 0.60);
+  --bubble-radius:           20px;
+  --bubble-w:                188px;
+  --bubble-tail-w:           12px;   /* triangle hanging below the bubble's square corner */
+  --bubble-tail-h:           10px;
+
+  /* ── Font sizes (rem — scale correctly with browser text zoom) */
+  --font-size-hero:          2.5rem;    /* 40px — large upload label    */
+  --font-size-btn:           1.5rem;    /* 24px — replace-file button   */
+  --font-size-input:         1.25rem;   /* 20px — chat input            */
+  --font-size-sm:            0.875rem;  /* 14px — body text, labels     */
+  --font-size-xs:            0.6875rem; /* 11px — usage / meta labels   */
+
+  /* ── Typography ──────────────────────────────────── */
+  --line-height-base:        1.4;
+
+  /* ── Spacing (rem — scale with text zoom) ────────── */
+  --space-xs:                0.25rem;   /* ~4px  */
+  --space-sm:                0.5rem;    /* ~8px  */
+  --space-md:                0.75rem;   /* ~12px */
+  --space-lg:                1rem;      /* ~16px */
+
+  /* ── Scrollbar ───────────────────────────────────── */
+  --scrollbar-w:             4px;
+  --scrollbar-radius:        2px;
+
+  /* ── Interactions ────────────────────────────────── */
+  --submit-hover-scale:      110%;
+
+  /* ── Structural layout (px — intentional fixed visual distances) */
+  --body-pad-v:              50px;    /* body top padding               */
+  --body-pad-h:              100px;   /* body left/right padding        */
+  --body-pad-bottom:         107px;   /* body bottom — floating gap     */
+  --content-gap:             100px;   /* margin-top on app-content      */
+  --content-col-gap:         200px;   /* gap between table and chat     */
+  --chat-panel-gap:          1rem;    /* left gap separating chat panel */
+  --drag-inset:              30px;    /* gap inside the drag border     */
+  --border-width:            2px;
+}
