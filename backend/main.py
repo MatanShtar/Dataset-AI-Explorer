@@ -4,6 +4,7 @@ AMAT Dataset Explorer – FastAPI backend entry point.
 import io
 import os
 import re
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -260,19 +261,33 @@ def ask(body: AskRequest) -> dict:
 
     user_message = f"Dataset context:\n\n{context}\n\nQuestion: {body.question}"
 
-    try:
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_content(
-            model=_GEMINI_MODEL,
-            contents=user_message,
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                max_output_tokens=4096,
-            ),
-        )
-    except Exception as exc:
-        # 502: the failure is in the upstream LLM service, not this API
-        raise HTTPException(status_code=502, detail=f"LLM request failed: {exc}")
+    client = genai.Client(api_key=api_key)
+
+    # Gemini's free tier intermittently returns 503 UNAVAILABLE under load —
+    # retry transient failures with backoff before giving up
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model=_GEMINI_MODEL,
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    max_output_tokens=4096,
+                ),
+            )
+            break
+        except Exception as exc:
+            transient = "UNAVAILABLE" in str(exc) or "RESOURCE_EXHAUSTED" in str(exc)
+            if transient and attempt < 2:
+                time.sleep(2 ** attempt)
+                continue
+            if transient:
+                raise HTTPException(
+                    status_code=503,
+                    detail="The AI service is temporarily overloaded — please try again in a moment.",
+                )
+            # 502: the failure is in the upstream LLM service, not this API
+            raise HTTPException(status_code=502, detail=f"LLM request failed: {exc}")
 
     answer_text = _strip_latex(response.text or "")
     usage_meta = response.usage_metadata

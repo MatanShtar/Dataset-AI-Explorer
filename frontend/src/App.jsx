@@ -23,7 +23,9 @@ export default function App() {
     try {
       const result = await uploadDataset(file)
       setUploadStatus('success')
-      setDataset(result)
+      // id ties chat history to this upload — replacing the dataset
+      // remounts ChatInterface so stale Q&A about the old file is cleared
+      setDataset({ ...result, id: Date.now() })
     } catch (err) {
       setUploadStatus('error')
       setUploadError(err.message)
@@ -104,7 +106,7 @@ export default function App() {
             <DataTable dataset={dataset} />
           </div>
           <div className="app-content__chat">
-            <ChatInterface />
+            <ChatInterface key={dataset.id} />
           </div>
         </div>
       )}
