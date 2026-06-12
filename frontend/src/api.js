@@ -1,4 +1,6 @@
-const API_BASE = 'http://127.0.0.1:8000'
+// Configurable for deployment (set VITE_API_BASE at build time);
+// defaults to the local dev backend
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://127.0.0.1:8000'
 
 // fetch() has no native timeout — abort via AbortController so a dead
 // backend surfaces as a clear error instead of hanging the UI
@@ -15,7 +17,11 @@ export async function uploadDataset(file) {
   formData.append('file', file)
   let res
   try {
-    res = await timedFetch(`${API_BASE}/upload`, { method: 'POST', body: formData })
+    res = await timedFetch(
+      `${API_BASE}/upload`,
+      { method: 'POST', body: formData },
+      60_000   // large CSVs (up to 50 MB) need more than the default timeout
+    )
   } catch (err) {
     if (err.name === 'AbortError') throw new Error('Upload timed out — is the backend running?')
     throw new Error('Cannot reach the server — is the backend running?')

@@ -20,9 +20,17 @@ load_dotenv(Path(__file__).parent / ".env")
 
 app = FastAPI(title="AMAT Dataset Explorer")
 
+# Lock down to the deployed frontend origin via ALLOWED_ORIGINS
+# (comma-separated); defaults to permissive for local development.
+_allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -146,6 +154,8 @@ def get_rows(
     df = store.df
     total = len(df)
     page = df.iloc[offset : offset + limit]
+    # NaN and ±inf are not valid JSON — replace with null before serializing
+    page = page.replace([float("inf"), float("-inf")], None)
     records = page.where(pd.notnull(page), other=None).to_dict(orient="records")
 
     return {"total": total, "offset": offset, "limit": limit, "rows": records}
@@ -261,7 +271,8 @@ def ask(body: AskRequest) -> dict:
             ),
         )
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        # 502: the failure is in the upstream LLM service, not this API
+        raise HTTPException(status_code=502, detail=f"LLM request failed: {exc}")
 
     answer_text = _strip_latex(response.text or "")
     usage_meta = response.usage_metadata

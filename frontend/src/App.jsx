@@ -83,7 +83,12 @@ export default function App() {
         type="file"
         accept=".csv"
         style={{ display: 'none' }}
-        onChange={(e) => handleFile(e.target.files[0])}
+        onChange={(e) => {
+          handleFile(e.target.files[0])
+          // reset so picking the same file again still fires onChange
+          // (otherwise retrying an upload that failed does nothing)
+          e.target.value = ''
+        }}
       />
 
       <UploadSection

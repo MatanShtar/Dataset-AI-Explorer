@@ -32,8 +32,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* arrow cursor everywhere — interactive elements opt back in
-     with cursor: pointer / text in their own rules */
+}
+
+/* arrow cursor everywhere — set on html (cursor inherits) rather than `*`,
+   so interactive elements that opt back in with cursor: pointer / text
+   also propagate it to their children (e.g. the label inside a button) */
+html {
   cursor: default;
 }
 
