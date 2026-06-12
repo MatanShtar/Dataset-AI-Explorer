@@ -61,6 +61,11 @@
   border-radius: var(--scrollbar-radius);
 }
 
+/* meeting point of the two scrollbars — defaults to a white square */
+.app-root--loaded::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* ── 2. Drag-over overlay ───────────────────────── */
 
 /* rendered as a real DOM element in App.jsx */

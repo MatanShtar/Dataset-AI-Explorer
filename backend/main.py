@@ -3,6 +3,7 @@ AMAT Dataset Explorer – FastAPI backend entry point.
 """
 import io
 import os
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -27,7 +28,7 @@ app.add_middleware(
 )
 
 _MAX_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MB
-_MAX_CONTEXT_ROWS = 50
+_MAX_CONTEXT_ROWS = 100
 _GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
 
 _BINARY_MIME_PREFIXES = ("image/", "audio/", "video/", "application/pdf")
@@ -176,6 +177,40 @@ def _build_dataset_context(df: pd.DataFrame, filename: str) -> str:
     return "\n".join(parts)
 
 
+def _strip_latex(text: str) -> str:
+    """Convert LaTeX math the model may emit despite instructions into plain text."""
+
+    def _clean(expr: str) -> str:
+        def _frac(match: re.Match) -> str:
+            num, den = match.group(1).strip(), match.group(2).strip()
+            if " " in num:
+                num = f"({num})"
+            if " " in den:
+                den = f"({den})"
+            return f"{num} / {den}"
+
+        expr = re.sub(r"\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}", _frac, expr)
+        expr = re.sub(r"\\(?:text|textbf|mathrm|mathbf|operatorname)\s*\{([^{}]*)\}", r"\1", expr)
+        for command, symbol in {
+            r"\times": "×", r"\cdot": "·", r"\div": "÷", r"\pm": "±",
+            r"\approx": "≈", r"\neq": "≠", r"\leq": "≤", r"\geq": "≥",
+            r"\%": "%", r"\$": "$", r"\,": " ", r"\;": " ",
+        }.items():
+            expr = expr.replace(command, symbol)
+        expr = re.sub(r"\\[a-zA-Z]+", "", expr)  # drop any remaining commands
+        expr = expr.replace("{", "").replace("}", "")
+        return re.sub(r"[ \t]{2,}", " ", expr).strip()
+
+    # display math ($$...$$ / \[...\]) — cleaned expression, bolded
+    text = re.sub(r"\$\$(.+?)\$\$", lambda m: f"**{_clean(m.group(1))}**", text, flags=re.S)
+    text = re.sub(r"\\\[(.+?)\\\]", lambda m: f"**{_clean(m.group(1))}**", text, flags=re.S)
+    # inline math: \(...\) always; $...$ only when it contains a LaTeX command,
+    # so currency amounts like "$5.20" are left untouched
+    text = re.sub(r"\\\((.+?)\\\)", lambda m: _clean(m.group(1)), text)
+    text = re.sub(r"\$([^$\n]*\\[^$\n]*)\$", lambda m: _clean(m.group(1)), text)
+    return text
+
+
 class AskRequest(BaseModel):
     question: str
 
@@ -206,7 +241,11 @@ def ask(body: AskRequest) -> dict:
         "The user has uploaded a CSV dataset and wants insights or answers about it. "
         "Answer questions accurately and concisely based on the data provided. "
         "If a calculation or aggregation is needed, show your work. "
-        "If you cannot determine something from the data shown, say so clearly."
+        "If you cannot determine something from the data shown, say so clearly. "
+        "Format answers as plain GitHub-flavored Markdown. Never use LaTeX or math "
+        "delimiters such as $...$, $$...$$, \\frac, or \\text — the interface cannot "
+        "render them. Write formulas in plain text instead, e.g. "
+        "Average = (342.5 + 120.2) / 2 = 231.35, using **bold** for emphasis."
     )
 
     user_message = f"Dataset context:\n\n{context}\n\nQuestion: {body.question}"
@@ -224,7 +263,7 @@ def ask(body: AskRequest) -> dict:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
-    answer_text = response.text or ""
+    answer_text = _strip_latex(response.text or "")
     usage_meta = response.usage_metadata
 
     return {
