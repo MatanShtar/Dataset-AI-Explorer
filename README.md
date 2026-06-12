@@ -22,7 +22,7 @@ A web application for exploring CSV datasets: upload a file, browse it in a pagi
 
 ## UX / UI Design
 
-The interface was designed in Figma before implementation — screen states (empty, drag-over, loaded), component layout, and the color/spacing system were defined there first, then translated into design tokens (`frontend/src/tokens.css`) that all component styles reference.
+The interface was designed in Figma before implementation — screen states (empty, loaded), component layout, and the color/spacing system were defined there first, then translated into design tokens (`frontend/src/tokens.css`) that all component styles reference.
 
 🎨 **[View the Figma design](https://www.figma.com/design/5Ed82PKCQvjcq4uqBPjpgj/Untitled?node-id=0-1&t=P3C40ra6wSraI2jB-1)**
 
