@@ -8,9 +8,9 @@ A web application for exploring CSV datasets: upload a file, browse it in a pagi
 
 | Service | Platform | URL |
 |---------|----------|-----|
-| **Web App** | Vercel | [Insert your Vercel link here] |
-| **REST API** | Render | [Insert your Render link here] |
-| **API Docs** (Swagger) | Render | [Insert your Render link here]/docs |
+| **Web App** | Vercel | [amat-dataset-explorer.vercel.app](https://amat-dataset-explorer-2du2sblk0-matan-shtar-s-projects.vercel.app?_vercel_share=a9zpn53pBe8kFRkvT2xFv7T1d9P9BrfC) |
+| **REST API** | Render | [amat-dataset-api.onrender.com](https://amat-dataset-api.onrender.com) |
+| **API Docs** (Swagger) | Render | [amat-dataset-api.onrender.com/docs](https://amat-dataset-api.onrender.com/docs) |
 
 > **Note:** The backend runs on Render's free tier, which spins down after inactivity — the first request may take ~30 seconds while the instance cold-starts.
 
