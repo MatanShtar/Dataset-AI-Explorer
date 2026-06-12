@@ -4,7 +4,15 @@ My submission for the Software Student Take-Home Exercise (Option A) for the Gen
 
 A web application for exploring CSV datasets: upload a file, browse it in a paginated table, and ask an AI assistant questions about the data in natural language.
 
-**Live demo:** _coming soon_ <!-- replace with the deployed URL -->
+## 🚀 Live Deployment
+
+| Service | Platform | URL |
+|---------|----------|-----|
+| **Web App** | Vercel | [Insert your Vercel link here] |
+| **REST API** | Render | [Insert your Render link here] |
+| **API Docs** (Swagger) | Render | [Insert your Render link here]/docs |
+
+> **Note:** The backend runs on Render's free tier, which spins down after inactivity — the first request may take ~30 seconds while the instance cold-starts.
 
 ## Features
 
