@@ -69,7 +69,35 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── 4. Skeleton / busy indicators ──────────────── */
+/* ── 4. Responsive zoom ─────────────────────────── */
+
+/* The layout is designed for full-size desktop monitors (≥1920px wide).
+   On smaller screens, scale the whole UI down so it fits without the
+   user having to zoom out manually. Media queries are evaluated against
+   the real viewport, so they are not affected by the zoom they apply. */
+
+/* large laptops / small desktops (1600–1919px) */
+@media (max-width: 1919px) {
+  html {
+    zoom: 0.85;
+  }
+}
+
+/* standard laptops (1280–1599px, e.g. 1920px displays at 125–150% OS scaling) */
+@media (max-width: 1599px) {
+  html {
+    zoom: 0.75;
+  }
+}
+
+/* small laptops / tablets in landscape (below 1280px) */
+@media (max-width: 1279px) {
+  html {
+    zoom: 0.65;
+  }
+}
+
+/* ── 5. Skeleton / busy indicators ──────────────── */
 
 /* shimmering placeholder bar — shared by the chat skeleton
    bubble and the data table's loading state */
