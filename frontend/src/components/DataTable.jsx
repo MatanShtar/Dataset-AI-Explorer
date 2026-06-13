@@ -3,6 +3,7 @@ import { fetchRows } from '../api'
 import './DataTable.css'
 
 const PAGE_SIZE = 100
+const SEARCH_DEBOUNCE_MS = 300
 
 // up to 3 decimal places, trailing zeros trimmed
 function formatCell(value) {
@@ -20,36 +21,85 @@ export default function DataTable({ dataset }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [slideDir, setSlideDir] = useState(0) // 1 = next, -1 = previous, 0 = no slide
+  const [searchInput, setSearchInput] = useState('') // raw, updated on every keystroke
+  const [search, setSearch] = useState('')           // debounced term sent to the backend
+  const [column, setColumn] = useState('')           // '' = search across all columns
 
-  // Reset to page 1 whenever a new dataset is loaded
+  // Reset everything whenever a new dataset is loaded
   useEffect(() => {
     setOffset(0)
     setSlideDir(0)
+    setSearchInput('')
+    setSearch('')
+    setColumn('')
   }, [dataset])
 
+  // Debounce typing into the term that actually triggers a fetch. Jumping back
+  // to page 1 keeps the offset valid against the (smaller) filtered result set.
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput.trim())
+      setOffset(0)
+      setSlideDir(0)
+    }, SEARCH_DEBOUNCE_MS)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
+  useEffect(() => {
+    let ignore = false   // drop a stale response if the query changes before it lands
     async function load() {
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchRows({ limit: PAGE_SIZE, offset })
+        const data = await fetchRows({ limit: PAGE_SIZE, offset, search, column })
+        if (ignore) return
         setRows(data.rows)
         setTotal(data.total)
       } catch (err) {
-        setError(err.message)
+        if (!ignore) setError(err.message)
       } finally {
-        setLoading(false)
+        if (!ignore) setLoading(false)
       }
     }
     load()
-  }, [dataset, offset])
+    return () => { ignore = true }
+  }, [dataset, offset, search, column])
 
-  // column order from the loaded rows; falls back to the upload
-  // response metadata so headers render while the first page loads
+  function handleColumnChange(e) {
+    setColumn(e.target.value)
+    setOffset(0)
+    setSlideDir(0)
+  }
+
+  // column order from the loaded rows; falls back to the upload response
+  // metadata so headers render while the first page loads (and when a
+  // search returns no rows)
   const columns = rows.length > 0 ? Object.keys(rows[0]) : (dataset?.columns ?? [])
+  const noResults = !loading && !error && rows.length === 0
 
   return (
     <section className="datatable-section">
+      <div className="datatable-toolbar">
+        <input
+          className="datatable-search"
+          type="text"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder={column ? `Search in ${column}…` : 'Search all columns…'}
+        />
+        <select
+          className="datatable-column-select"
+          value={column}
+          onChange={handleColumnChange}
+          aria-label="Column to search"
+        >
+          <option value="">All columns</option>
+          {(dataset?.columns ?? []).map((col) => (
+            <option key={col} value={col}>{col}</option>
+          ))}
+        </select>
+      </div>
+
       {loading && (
         <div className="datatable-loading" aria-label="Loading rows">
           {Array.from({ length: 8 }, (_, i) => (
@@ -64,7 +114,13 @@ export default function DataTable({ dataset }) {
         </div>
       )}
 
-      {!loading && !error && (
+      {noResults && (
+        <div className="datatable-empty">
+          <span>{search ? 'No rows match your search.' : 'No rows to display.'}</span>
+        </div>
+      )}
+
+      {!loading && !error && !noResults && (
         <div
           className={`datatable-scroll${
             slideDir === 1

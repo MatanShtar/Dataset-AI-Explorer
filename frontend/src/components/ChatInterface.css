@@ -233,6 +233,41 @@
   white-space: nowrap;   /* keep natural column widths — bubble scrolls on x instead */
 }
 
+/* Wide tables and code blocks scroll on the x-axis inside the bubble. Style that
+   horizontal bar to match the panel scrollbars (thin, rounded, no native arrows).
+   The thumb uses --warm-purple-solid rather than --bubble-assistant-bg like the
+   others: it sits on the already-purple bubble, so the solid tone preserves the
+   same contrast the panel bars get against the lighter fill. */
+@supports not selector(::-webkit-scrollbar) {
+  .chat-message__text--md pre,
+  .chat-message__text--md table {
+    scrollbar-width: thin;
+    scrollbar-color: var(--warm-purple-solid) transparent;
+  }
+}
+
+.chat-message__text--md pre::-webkit-scrollbar,
+.chat-message__text--md table::-webkit-scrollbar {
+  height: var(--scrollbar-w);
+}
+
+.chat-message__text--md pre::-webkit-scrollbar-button,
+.chat-message__text--md table::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+}
+
+.chat-message__text--md pre::-webkit-scrollbar-track,
+.chat-message__text--md table::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-message__text--md pre::-webkit-scrollbar-thumb,
+.chat-message__text--md table::-webkit-scrollbar-thumb {
+  background: var(--warm-purple-solid);
+  border-radius: var(--scrollbar-radius);
+}
+
 /* ── 5. Input bar ───────────────────────────────── */
 
 .chat-form {

@@ -78,7 +78,7 @@ export default function ChatInterface() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Chat with AI"
+          placeholder="Ask about the data"
           disabled={loading}
         />
         <button

@@ -33,10 +33,12 @@ export async function uploadDataset(file) {
   return res.json()
 }
 
-export async function fetchRows({ limit = 100, offset = 0 } = {}) {
+export async function fetchRows({ limit = 100, offset = 0, search = '', column = '' } = {}) {
   const url = new URL(`${API_BASE}/rows`)
   url.searchParams.set('limit', limit)
   url.searchParams.set('offset', offset)
+  if (search) url.searchParams.set('search', search)
+  if (column) url.searchParams.set('column', column)
   let res
   try {
     res = await timedFetch(url)

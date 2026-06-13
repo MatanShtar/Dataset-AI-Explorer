@@ -144,8 +144,15 @@ async def upload_dataset(file: UploadFile = File(...)) -> dict:
 def get_rows(
     limit: int = Query(default=100, ge=1, le=1000),
     offset: int = Query(default=0, ge=0),
+    search: str = Query(default=""),
+    column: str | None = Query(default=None),
 ) -> dict:
-    """Return a paginated slice of the active dataset as an array of row objects."""
+    """Return a paginated slice of the active dataset as an array of row objects.
+
+    An optional case-insensitive ``search`` keeps only rows containing the term —
+    matched against every column by default, or a single one when ``column`` is
+    given. ``total`` reflects the filtered count so pagination stays correct.
+    """
     if store.df is None:
         raise HTTPException(
             status_code=404,
@@ -153,6 +160,26 @@ def get_rows(
         )
 
     df = store.df
+
+    # a blank ?column= means "search every column", same as omitting it
+    if column is not None:
+        column = column.strip() or None
+    if column is not None and column not in df.columns:
+        raise HTTPException(status_code=400, detail=f"Unknown column '{column}'.")
+
+    term = search.strip()
+    if term:
+        # Substring match on the string form of each cell. regex=False treats the
+        # term literally (no injection / invalid-pattern errors); na=False keeps
+        # missing cells from matching.
+        if column is not None:
+            mask = df[column].astype(str).str.contains(term, case=False, regex=False, na=False)
+        else:
+            mask = pd.Series(False, index=df.index)
+            for col in df.columns:
+                mask |= df[col].astype(str).str.contains(term, case=False, regex=False, na=False)
+        df = df[mask]
+
     total = len(df)
     page = df.iloc[offset : offset + limit]
     # NaN and ±inf are not valid JSON — replace with null before serializing

@@ -16,6 +16,52 @@
   overflow: hidden;
 }
 
+/* ── Search & column-filter toolbar ─────────────── */
+
+.datatable-toolbar {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--border-width) solid var(--warm-purple-solid);
+  flex-shrink: 0;
+}
+
+.datatable-search {
+  flex: 1;
+  min-width: 0;   /* let the input shrink instead of overflowing the panel */
+  background: var(--glass-white);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-md);
+  color: white;
+  font-size: var(--font-size-sm);
+  outline: none;
+  cursor: text;
+}
+
+.datatable-search::placeholder {
+  color: white;
+  opacity: var(--opacity-subdued);
+}
+
+.datatable-column-select {
+  flex-shrink: 0;
+  max-width: 40%;
+  background: var(--warm-purple-fill);
+  border: var(--border-width) solid var(--warm-purple-solid);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-md);
+  color: white;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  outline: none;
+}
+
+/* the native options popup uses the OS palette (light bg) — keep text legible */
+.datatable-column-select option {
+  color: black;
+}
+
 /* ── 2. Scroll area & scrollbars ────────────────── */
 
 .datatable-scroll {
@@ -156,7 +202,8 @@
 .datatable-loading .skeleton-line:nth-child(3n)   { width: 85%; }
 .datatable-loading .skeleton-line:nth-child(3n+2) { width: 70%; }
 
-.datatable-error {
+.datatable-error,
+.datatable-empty {
   flex: 1;
   display: flex;
   align-items: center;
