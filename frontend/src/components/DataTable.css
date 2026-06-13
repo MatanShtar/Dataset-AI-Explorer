@@ -41,6 +41,9 @@
 
 .datatable-search::placeholder {
   color: white;
+}
+
+.datatable-search:focus::placeholder {
   opacity: var(--opacity-subdued);
 }
 
