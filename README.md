@@ -13,9 +13,9 @@
 
 | Service | Platform | URL |
 |---------|----------|-----|
-| **Web App** | Vercel | [amat-dataset-explorer.vercel.app](https://amat-dataset-explorer.vercel.app) |
-| **REST API** | Render | [amat-dataset-api.onrender.com](https://amat-dataset-api.onrender.com) |
-| **API Docs** (Swagger) | Render | [amat-dataset-api.onrender.com/docs](https://amat-dataset-api.onrender.com/docs) |
+| **Web App** | Vercel | [Link](https://dataset-ai-explorer.vercel.app) |
+| **REST API** | Render | [Link](https://dataset-ai-explorer.onrender.com) |
+| **API Docs** (Swagger) | Render | [Link](https://dataset-ai-explorer.onrender.com/docs) |
 
 > **Note:** The backend runs on Render's free tier, which spins down after inactivity — the first request may take ~30 seconds while the instance cold-starts.
 
