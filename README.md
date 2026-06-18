@@ -1,13 +1,13 @@
 # Dataset-AI-Explorer — AI-Powered Dataset Explorer
-A full-stack web application that allows users to seamlessly upload CSV datasets, explore them via a paginated interface, and extract insights using a natural language AI assistant.
+## A full-stack web application that allows users to seamlessly upload CSV datasets, explore them via a paginated interface, and extract insights using a natural language AI assistant.
 
-Key Features:
+### __Key Features:__
 
-### Smart Data Parsing: In-memory dataset handling using Pandas for rapid data manipulation.
+*Smart Data Parsing:* In-memory dataset handling using Pandas for rapid data manipulation.
 
-### AI Integration: Context-aware chat powered by the Gemini LLM to answer complex data queries.
+*AI Integration:* Context-aware chat powered by the Gemini LLM to answer complex data queries.
 
-### Optimized UI: Custom debounce logic and responsive design for a smooth user experience.
+*Optimized UI:* Custom debounce logic and responsive design for a smooth user experience.
 
 ## 🚀 Live Deployment
 
