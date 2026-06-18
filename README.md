@@ -1,5 +1,5 @@
 # Dataset-AI-Explorer — AI-Powered Dataset Explorer
-## A full-stack web application that allows users to seamlessly upload CSV datasets, explore them via a paginated interface, and extract insights using a natural language AI assistant.
+### A full-stack web application that allows users to seamlessly upload CSV datasets, explore them via a paginated interface, and extract insights using a natural language AI assistant.
 
 ### __Key Features:__
 
