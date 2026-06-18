@@ -1,5 +1,5 @@
 """
-AMAT Dataset Explorer – FastAPI backend entry point.
+Dataset AI Explorer – FastAPI backend entry point.
 """
 import io
 import os
@@ -19,7 +19,7 @@ from pydantic import BaseModel
 load_dotenv()
 load_dotenv(Path(__file__).parent / ".env")
 
-app = FastAPI(title="AMAT Dataset Explorer")
+app = FastAPI(title="Dataset AI Explorer")
 
 # Lock down to the deployed frontend origin via ALLOWED_ORIGINS
 # (comma-separated); defaults to permissive for local development.
