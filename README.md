@@ -1,16 +1,21 @@
-# Applied Materials — Dataset Explorer with AI Insights
+# Dataset-AI-Explorer — AI-Powered Dataset Explorer
+### A full-stack web application that allows users to seamlessly upload CSV datasets, explore them via a paginated interface, and extract insights using a natural language AI assistant.
 
-My submission for the Software Student Take-Home Exercise (Option A) for the GenAI Infrastructure team.
+### __Key Features:__
 
-A web application for exploring CSV datasets: upload a file, browse it in a paginated table, and ask an AI assistant questions about the data in natural language.
+*Smart Data Parsing:* In-memory dataset handling using Pandas for rapid data manipulation.
+
+*AI Integration:* Context-aware chat powered by the Gemini LLM to answer complex data queries.
+
+*Optimized UI:* Custom debounce logic and responsive design for a smooth user experience.
 
 ## 🚀 Live Deployment
 
 | Service | Platform | URL |
 |---------|----------|-----|
-| **Web App** | Vercel | [amat-dataset-explorer.vercel.app](https://amat-dataset-explorer.vercel.app) |
-| **REST API** | Render | [amat-dataset-api.onrender.com](https://amat-dataset-api.onrender.com) |
-| **API Docs** (Swagger) | Render | [amat-dataset-api.onrender.com/docs](https://amat-dataset-api.onrender.com/docs) |
+| **Web App** | Vercel | [Link](https://dataset-ai-explorer.vercel.app) |
+| **REST API** | Render | [Link](https://dataset-ai-explorer.onrender.com) |
+| **API Docs** (Swagger) | Render | [Link](https://dataset-ai-explorer.onrender.com/docs) |
 
 > **Note:** The backend runs on Render's free tier, which spins down after inactivity — the first request may take ~30 seconds while the instance cold-starts.
 
